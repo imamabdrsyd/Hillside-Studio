@@ -1,0 +1,2091 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hillside Studio Finance</title>
+    <link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        :root {
+            --bg-dark: #0a0a0f;
+            --bg-card: #12121a;
+            --bg-card-hover: #1a1a25;
+            --accent-green: #00ff87;
+            --accent-blue: #00d4ff;
+            --accent-purple: #a855f7;
+            --accent-orange: #ff6b35;
+            --accent-red: #ff4757;
+            --accent-yellow: #ffd93d;
+            --text-primary: #ffffff;
+            --text-secondary: #8b8b9e;
+            --text-muted: #5a5a6e;
+            --border-color: #2a2a3a;
+            --gradient-1: linear-gradient(135deg, #00ff87 0%, #00d4ff 100%);
+            --gradient-2: linear-gradient(135deg, #a855f7 0%, #ff6b35 100%);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Sora', sans-serif;
+            background: var(--bg-dark);
+            color: var(--text-primary);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        /* Animated background */
+        .bg-gradient {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            background: 
+                radial-gradient(ellipse at 20% 20%, rgba(0, 255, 135, 0.08) 0%, transparent 50%),
+                radial-gradient(ellipse at 80% 80%, rgba(168, 85, 247, 0.08) 0%, transparent 50%),
+                radial-gradient(ellipse at 50% 50%, rgba(0, 212, 255, 0.05) 0%, transparent 60%);
+            animation: bgPulse 15s ease-in-out infinite;
+        }
+
+        @keyframes bgPulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
+
+        /* Header */
+        .header {
+            padding: 1.5rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid var(--border-color);
+            backdrop-filter: blur(20px);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .logo-icon {
+            width: 48px;
+            height: 48px;
+            background: var(--gradient-1);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            box-shadow: 0 8px 32px rgba(0, 255, 135, 0.3);
+        }
+
+        .logo-text h1 {
+            font-size: 1.4rem;
+            font-weight: 700;
+            background: var(--gradient-1);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            letter-spacing: -0.5px;
+        }
+
+        .logo-text span {
+            font-family: 'Space Mono', monospace;
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+        }
+
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .date-display {
+            font-family: 'Space Mono', monospace;
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            padding: 0.5rem 1rem;
+            background: var(--bg-card);
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+        }
+
+        /* Navigation */
+        .nav-tabs {
+            display: flex;
+            gap: 0.5rem;
+            padding: 1rem 2rem;
+            overflow-x: auto;
+            scrollbar-width: none;
+        }
+
+        .nav-tabs::-webkit-scrollbar {
+            display: none;
+        }
+
+        .nav-tab {
+            padding: 0.75rem 1.5rem;
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            white-space: nowrap;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .nav-tab:hover {
+            background: var(--bg-card-hover);
+            color: var(--text-primary);
+        }
+
+        .nav-tab.active {
+            background: var(--gradient-1);
+            color: var(--bg-dark);
+            border-color: transparent;
+            box-shadow: 0 4px 20px rgba(0, 255, 135, 0.3);
+        }
+
+        .nav-tab .icon {
+            font-size: 1.1rem;
+        }
+
+        /* Main Content */
+        .main-content {
+            padding: 1.5rem 2rem;
+        }
+
+        .tab-content {
+            display: none;
+            animation: fadeIn 0.4s ease;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Dashboard Grid */
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        @media (max-width: 1200px) {
+            .dashboard-grid { grid-template-columns: repeat(2, 1fr); }
+        }
+
+        @media (max-width: 600px) {
+            .dashboard-grid { grid-template-columns: 1fr; }
+        }
+
+        /* Stat Cards */
+        .stat-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 1.5rem;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-4px);
+            border-color: var(--accent-green);
+            box-shadow: 0 8px 32px rgba(0, 255, 135, 0.15);
+        }
+
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 3px;
+            background: var(--gradient-1);
+        }
+
+        .stat-card.earn::before { background: var(--accent-green); }
+        .stat-card.opex::before { background: var(--accent-yellow); }
+        .stat-card.var::before { background: var(--accent-orange); }
+        .stat-card.capex::before { background: var(--accent-blue); }
+        .stat-card.fin::before { background: var(--accent-purple); }
+        .stat-card.profit::before { background: var(--gradient-2); }
+
+        .stat-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 1rem;
+        }
+
+        .stat-icon {
+            width: 44px;
+            height: 44px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.3rem;
+        }
+
+        .stat-card.earn .stat-icon { background: rgba(0, 255, 135, 0.15); }
+        .stat-card.opex .stat-icon { background: rgba(255, 217, 61, 0.15); }
+        .stat-card.var .stat-icon { background: rgba(255, 107, 53, 0.15); }
+        .stat-card.capex .stat-icon { background: rgba(0, 212, 255, 0.15); }
+        .stat-card.fin .stat-icon { background: rgba(168, 85, 247, 0.15); }
+        .stat-card.profit .stat-icon { background: rgba(0, 255, 135, 0.2); }
+
+        .stat-change {
+            font-family: 'Space Mono', monospace;
+            font-size: 0.75rem;
+            padding: 0.25rem 0.5rem;
+            border-radius: 6px;
+        }
+
+        .stat-change.positive {
+            background: rgba(0, 255, 135, 0.15);
+            color: var(--accent-green);
+        }
+
+        .stat-change.negative {
+            background: rgba(255, 71, 87, 0.15);
+            color: var(--accent-red);
+        }
+
+        .stat-label {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            margin-bottom: 0.5rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .stat-value {
+            font-family: 'Space Mono', monospace;
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+
+        .stat-sub {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            margin-top: 0.5rem;
+        }
+
+        /* Charts Section */
+        .charts-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        @media (max-width: 1000px) {
+            .charts-grid { grid-template-columns: 1fr; }
+        }
+
+        .chart-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 1.5rem;
+        }
+
+        .chart-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .chart-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+        }
+
+        .chart-period {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .period-btn {
+            padding: 0.4rem 0.8rem;
+            background: transparent;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            color: var(--text-secondary);
+            font-size: 0.8rem;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .period-btn:hover, .period-btn.active {
+            background: var(--accent-green);
+            color: var(--bg-dark);
+            border-color: var(--accent-green);
+        }
+
+        .chart-container {
+            position: relative;
+            height: 300px;
+        }
+
+        /* Input Form */
+        .input-section {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .input-section h2 {
+            font-size: 1.3rem;
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .form-group label {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            font-weight: 500;
+        }
+
+        .form-group input,
+        .form-group select {
+            padding: 0.875rem 1rem;
+            background: var(--bg-dark);
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            color: var(--text-primary);
+            font-family: 'Sora', sans-serif;
+            font-size: 0.95rem;
+            transition: all 0.2s;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: var(--accent-green);
+            box-shadow: 0 0 0 3px rgba(0, 255, 135, 0.1);
+        }
+
+        .form-group select {
+            cursor: pointer;
+        }
+
+        .form-group select option {
+            background: var(--bg-dark);
+            color: var(--text-primary);
+        }
+
+        .btn-submit {
+            padding: 1rem 2rem;
+            background: var(--gradient-1);
+            border: none;
+            border-radius: 12px;
+            color: var(--bg-dark);
+            font-family: 'Sora', sans-serif;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            margin-top: 1rem;
+        }
+
+        .btn-submit:hover {
+            transform: scale(1.02);
+            box-shadow: 0 8px 32px rgba(0, 255, 135, 0.4);
+        }
+
+        /* Category Tags */
+        .category-tags {
+            display: flex;
+            gap: 0.75rem;
+            flex-wrap: wrap;
+            margin-top: 1rem;
+            padding-top: 1rem;
+            border-top: 1px solid var(--border-color);
+        }
+
+        .category-tag {
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+        }
+
+        .category-tag.earn { background: rgba(0, 255, 135, 0.15); color: var(--accent-green); }
+        .category-tag.opex { background: rgba(255, 217, 61, 0.15); color: var(--accent-yellow); }
+        .category-tag.var { background: rgba(255, 107, 53, 0.15); color: var(--accent-orange); }
+        .category-tag.capex { background: rgba(0, 212, 255, 0.15); color: var(--accent-blue); }
+        .category-tag.fin { background: rgba(168, 85, 247, 0.15); color: var(--accent-purple); }
+
+        /* Transaction Table */
+        .table-section {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            overflow: hidden;
+        }
+
+        .table-header {
+            padding: 1.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .table-header h2 {
+            font-size: 1.1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .table-filters {
+            display: flex;
+            gap: 0.75rem;
+        }
+
+        .filter-btn {
+            padding: 0.5rem 1rem;
+            background: var(--bg-dark);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            color: var(--text-secondary);
+            font-size: 0.8rem;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .filter-btn:hover, .filter-btn.active {
+            border-color: var(--accent-green);
+            color: var(--accent-green);
+        }
+
+        .table-wrapper {
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th {
+            padding: 1rem 1.5rem;
+            text-align: left;
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            background: rgba(0, 0, 0, 0.2);
+        }
+
+        td {
+            padding: 1rem 1.5rem;
+            border-top: 1px solid var(--border-color);
+            font-size: 0.9rem;
+        }
+
+        tr:hover td {
+            background: var(--bg-card-hover);
+        }
+
+        .cat-badge {
+            padding: 0.3rem 0.75rem;
+            border-radius: 6px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            font-family: 'Space Mono', monospace;
+        }
+
+        .cat-badge.earn { background: rgba(0, 255, 135, 0.15); color: var(--accent-green); }
+        .cat-badge.opex { background: rgba(255, 217, 61, 0.15); color: var(--accent-yellow); }
+        .cat-badge.var { background: rgba(255, 107, 53, 0.15); color: var(--accent-orange); }
+        .cat-badge.capex { background: rgba(0, 212, 255, 0.15); color: var(--accent-blue); }
+        .cat-badge.fin { background: rgba(168, 85, 247, 0.15); color: var(--accent-purple); }
+
+        .amount-positive { color: var(--accent-green); }
+        .amount-negative { color: var(--accent-red); }
+
+        /* Accounting Books */
+        .books-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1.5rem;
+        }
+
+        @media (max-width: 900px) {
+            .books-grid { grid-template-columns: 1fr; }
+        }
+
+        .book-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            overflow: hidden;
+        }
+
+        .book-header {
+            padding: 1.25rem 1.5rem;
+            background: rgba(0, 0, 0, 0.3);
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .book-header h3 {
+            font-size: 1rem;
+            font-weight: 600;
+        }
+
+        .book-content {
+            padding: 1.5rem;
+        }
+
+        .book-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 0.75rem 0;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .book-row:last-child {
+            border-bottom: none;
+        }
+
+        .book-row.total {
+            margin-top: 0.5rem;
+            padding-top: 1rem;
+            border-top: 2px solid var(--border-color);
+            font-weight: 700;
+        }
+
+        .book-label {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+
+        .book-value {
+            font-family: 'Space Mono', monospace;
+            font-weight: 600;
+        }
+
+        .book-value.positive { color: var(--accent-green); }
+        .book-value.negative { color: var(--accent-red); }
+
+        /* Toast Notification */
+        .toast {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            padding: 1rem 1.5rem;
+            background: var(--accent-green);
+            color: var(--bg-dark);
+            border-radius: 12px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            transform: translateY(100px);
+            opacity: 0;
+            transition: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+            z-index: 1000;
+        }
+
+        .toast.show {
+            transform: translateY(0);
+            opacity: 1;
+        }
+
+        /* Cash Flow Waterfall */
+        .waterfall-container {
+            display: flex;
+            align-items: flex-end;
+            justify-content: space-around;
+            height: 250px;
+            padding: 2rem 1rem;
+            gap: 1rem;
+        }
+
+        .waterfall-bar {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.5rem;
+            flex: 1;
+        }
+
+        .bar {
+            width: 100%;
+            max-width: 60px;
+            border-radius: 8px 8px 0 0;
+            transition: all 0.3s;
+            position: relative;
+        }
+
+        .bar:hover {
+            filter: brightness(1.2);
+        }
+
+        .bar-label {
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+            text-align: center;
+        }
+
+        .bar-value {
+            font-family: 'Space Mono', monospace;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            padding: 4rem 2rem;
+            color: var(--text-secondary);
+        }
+
+        .empty-state .icon {
+            font-size: 4rem;
+            margin-bottom: 1rem;
+            opacity: 0.5;
+        }
+
+        /* Delete Button */
+        .btn-delete {
+            padding: 0.4rem 0.6rem;
+            background: rgba(255, 71, 87, 0.15);
+            border: none;
+            border-radius: 6px;
+            color: var(--accent-red);
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .btn-delete:hover {
+            background: var(--accent-red);
+            color: white;
+        }
+
+        /* Bulk Actions */
+        .table-actions {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+            align-items: flex-end;
+        }
+
+        .bulk-actions {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .btn-bulk-delete {
+            padding: 0.5rem 1rem;
+            background: rgba(255, 71, 87, 0.15);
+            border: 1px solid var(--accent-red);
+            border-radius: 8px;
+            color: var(--accent-red);
+            font-size: 0.85rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-family: 'Sora', sans-serif;
+        }
+
+        .btn-bulk-delete:hover {
+            background: var(--accent-red);
+            color: white;
+        }
+
+        /* Delete Modal */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(8px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .modal-overlay.show {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .modal {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 20px;
+            padding: 2rem;
+            max-width: 450px;
+            width: 90%;
+            transform: scale(0.9) translateY(20px);
+            transition: all 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+        }
+
+        .modal-overlay.show .modal {
+            transform: scale(1) translateY(0);
+        }
+
+        .modal-header {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .modal-icon {
+            width: 50px;
+            height: 50px;
+            background: rgba(255, 71, 87, 0.15);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+        }
+
+        .modal-header h3 {
+            font-size: 1.2rem;
+            font-weight: 600;
+        }
+
+        .modal-header p {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            margin-top: 0.25rem;
+        }
+
+        .modal-body {
+            margin-bottom: 1.5rem;
+        }
+
+        .delete-options {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+        }
+
+        .delete-option {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 1rem;
+            background: var(--bg-dark);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .delete-option:hover {
+            border-color: var(--accent-red);
+            background: rgba(255, 71, 87, 0.05);
+        }
+
+        .delete-option.selected {
+            border-color: var(--accent-red);
+            background: rgba(255, 71, 87, 0.1);
+        }
+
+        .delete-option input[type="radio"] {
+            display: none;
+        }
+
+        .delete-option .radio-circle {
+            width: 20px;
+            height: 20px;
+            border: 2px solid var(--border-color);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+        }
+
+        .delete-option.selected .radio-circle {
+            border-color: var(--accent-red);
+            background: var(--accent-red);
+        }
+
+        .delete-option.selected .radio-circle::after {
+            content: '✓';
+            color: white;
+            font-size: 0.75rem;
+        }
+
+        .delete-option-content {
+            flex: 1;
+        }
+
+        .delete-option-title {
+            font-weight: 500;
+            margin-bottom: 0.25rem;
+        }
+
+        .delete-option-desc {
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+        }
+
+        .delete-option-count {
+            font-family: 'Space Mono', monospace;
+            font-size: 0.85rem;
+            color: var(--accent-red);
+            background: rgba(255, 71, 87, 0.15);
+            padding: 0.25rem 0.5rem;
+            border-radius: 6px;
+        }
+
+        .modal-footer {
+            display: flex;
+            gap: 1rem;
+            justify-content: flex-end;
+        }
+
+        .btn-modal {
+            padding: 0.75rem 1.5rem;
+            border-radius: 10px;
+            font-family: 'Sora', sans-serif;
+            font-size: 0.9rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .btn-modal-cancel {
+            background: var(--bg-dark);
+            border: 1px solid var(--border-color);
+            color: var(--text-secondary);
+        }
+
+        .btn-modal-cancel:hover {
+            border-color: var(--text-secondary);
+            color: var(--text-primary);
+        }
+
+        .btn-modal-confirm {
+            background: var(--accent-red);
+            border: none;
+            color: white;
+        }
+
+        .btn-modal-confirm:hover {
+            background: #ff2d3b;
+            box-shadow: 0 4px 20px rgba(255, 71, 87, 0.4);
+        }
+
+        .btn-modal-confirm:disabled {
+            background: var(--text-muted);
+            cursor: not-allowed;
+            box-shadow: none;
+        }
+
+        /* Confirmation Input */
+        .confirm-input-group {
+            margin-top: 1rem;
+            padding-top: 1rem;
+            border-top: 1px solid var(--border-color);
+        }
+
+        .confirm-input-group label {
+            display: block;
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            margin-bottom: 0.5rem;
+        }
+
+        .confirm-input-group input {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            background: var(--bg-dark);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            color: var(--text-primary);
+            font-family: 'Space Mono', monospace;
+            font-size: 0.9rem;
+        }
+
+        .confirm-input-group input:focus {
+            outline: none;
+            border-color: var(--accent-red);
+        }
+
+        .confirm-input-group .hint {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            margin-top: 0.5rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="bg-gradient"></div>
+
+    <!-- Header -->
+    <header class="header">
+        <div class="logo">
+            <div class="logo-icon">🏔️</div>
+            <div class="logo-text">
+                <h1>Hillside Studio</h1>
+                <span>Finance Dashboard v1.0</span>
+            </div>
+        </div>
+        <div class="header-right">
+            <div class="date-display" id="currentDate"></div>
+        </div>
+    </header>
+
+    <!-- Navigation -->
+    <nav class="nav-tabs">
+        <button class="nav-tab active" data-tab="dashboard">
+            <span class="icon">📊</span> Dashboard
+        </button>
+        <button class="nav-tab" data-tab="input">
+            <span class="icon">✏️</span> Input Transaksi
+        </button>
+        <button class="nav-tab" data-tab="jurnal">
+            <span class="icon">📖</span> Jurnal Umum
+        </button>
+        <button class="nav-tab" data-tab="ledger">
+            <span class="icon">📚</span> Buku Besar
+        </button>
+        <button class="nav-tab" data-tab="income">
+            <span class="icon">💰</span> Laba Rugi
+        </button>
+        <button class="nav-tab" data-tab="balance">
+            <span class="icon">⚖️</span> Neraca
+        </button>
+        <button class="nav-tab" data-tab="cashflow">
+            <span class="icon">🌊</span> Arus Kas
+        </button>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <!-- Dashboard Tab -->
+        <div class="tab-content active" id="dashboard">
+            <div class="dashboard-grid">
+                <div class="stat-card earn">
+                    <div class="stat-header">
+                        <div class="stat-icon">💚</div>
+                        <span class="stat-change positive" id="earnChange">+0%</span>
+                    </div>
+                    <div class="stat-label">Total Pemasukan (EARN)</div>
+                    <div class="stat-value" id="totalEarn">Rp 0</div>
+                    <div class="stat-sub">Sewa studio & equipment</div>
+                </div>
+                <div class="stat-card opex">
+                    <div class="stat-header">
+                        <div class="stat-icon">💛</div>
+                        <span class="stat-change negative" id="opexChange">-0%</span>
+                    </div>
+                    <div class="stat-label">Biaya Operasional (OPEX)</div>
+                    <div class="stat-value" id="totalOpex">Rp 0</div>
+                    <div class="stat-sub">Gaji, listrik, sewa</div>
+                </div>
+                <div class="stat-card var">
+                    <div class="stat-header">
+                        <div class="stat-icon">🧡</div>
+                        <span class="stat-change negative" id="varChange">-0%</span>
+                    </div>
+                    <div class="stat-label">Biaya Variabel (VAR)</div>
+                    <div class="stat-value" id="totalVar">Rp 0</div>
+                    <div class="stat-sub">Perbaikan, supplies</div>
+                </div>
+                <div class="stat-card profit">
+                    <div class="stat-header">
+                        <div class="stat-icon">✨</div>
+                        <span class="stat-change positive" id="profitChange">+0%</span>
+                    </div>
+                    <div class="stat-label">Laba Bersih</div>
+                    <div class="stat-value" id="netProfit">Rp 0</div>
+                    <div class="stat-sub" id="profitMargin">Margin: 0%</div>
+                </div>
+            </div>
+
+            <!-- Charts -->
+            <div class="charts-grid">
+                <div class="chart-card">
+                    <div class="chart-header">
+                        <h3 class="chart-title">📈 Trend Keuangan Bulanan</h3>
+                        <div class="chart-period">
+                            <button class="period-btn active">6 Bulan</button>
+                            <button class="period-btn">12 Bulan</button>
+                        </div>
+                    </div>
+                    <div class="chart-container">
+                        <canvas id="trendChart"></canvas>
+                    </div>
+                </div>
+                <div class="chart-card">
+                    <div class="chart-header">
+                        <h3 class="chart-title">🍩 Komposisi Pengeluaran</h3>
+                    </div>
+                    <div class="chart-container">
+                        <canvas id="expenseChart"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Additional Stats -->
+            <div class="dashboard-grid">
+                <div class="stat-card capex">
+                    <div class="stat-header">
+                        <div class="stat-icon">💙</div>
+                    </div>
+                    <div class="stat-label">Total Aset (CAPEX)</div>
+                    <div class="stat-value" id="totalCapex">Rp 0</div>
+                    <div class="stat-sub">Investasi peralatan</div>
+                </div>
+                <div class="stat-card fin">
+                    <div class="stat-header">
+                        <div class="stat-icon">💜</div>
+                    </div>
+                    <div class="stat-label">Dividen/Financing (FIN)</div>
+                    <div class="stat-value" id="totalFin">Rp 0</div>
+                    <div class="stat-sub">Pembayaran ke owner</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <div class="stat-icon">🏦</div>
+                    </div>
+                    <div class="stat-label">Saldo Kas</div>
+                    <div class="stat-value" id="cashBalance">Rp 0</div>
+                    <div class="stat-sub">Cash on hand</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <div class="stat-icon">📝</div>
+                    </div>
+                    <div class="stat-label">Total Transaksi</div>
+                    <div class="stat-value" id="totalTrx">0</div>
+                    <div class="stat-sub">Periode ini</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Input Tab -->
+        <div class="tab-content" id="input">
+            <div class="input-section">
+                <h2>✏️ Input Transaksi Baru</h2>
+                <form id="transactionForm" class="form-grid">
+                    <div class="form-group">
+                        <label>Tanggal</label>
+                        <input type="date" id="inputDate" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Kategori</label>
+                        <select id="inputCategory" required>
+                            <option value="">Pilih Kategori</option>
+                            <option value="EARN">🟢 EARN - Pemasukan Sewa</option>
+                            <option value="OPEX">🟡 OPEX - Biaya Operasional</option>
+                            <option value="VAR">🟠 VAR - Biaya Variabel</option>
+                            <option value="CAPEX">🔵 CAPEX - Pembelian Aset</option>
+                            <option value="FIN">🟣 FIN - Dividen/Financing</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Deskripsi</label>
+                        <input type="text" id="inputDesc" placeholder="Contoh: Sewa Studio Januari" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Nominal (Rp)</label>
+                        <input type="number" id="inputAmount" placeholder="5000000" required min="0">
+                    </div>
+                    <div class="form-group">
+                        <label>Tipe</label>
+                        <select id="inputType" required>
+                            <option value="debit">Debit (Uang Masuk)</option>
+                            <option value="credit">Kredit (Uang Keluar)</option>
+                        </select>
+                    </div>
+                </form>
+                <button type="submit" form="transactionForm" class="btn-submit">
+                    ➕ Tambah Transaksi
+                </button>
+                <div class="category-tags">
+                    <span class="category-tag earn">🟢 EARN: Sewa Studio</span>
+                    <span class="category-tag opex">🟡 OPEX: Gaji, Listrik</span>
+                    <span class="category-tag var">🟠 VAR: Perbaikan</span>
+                    <span class="category-tag capex">🔵 CAPEX: Beli Alat</span>
+                    <span class="category-tag fin">🟣 FIN: Dividen</span>
+                </div>
+            </div>
+
+            <!-- Recent Transactions -->
+            <div class="table-section">
+                <div class="table-header">
+                    <h2>📋 Transaksi Terbaru</h2>
+                    <div class="table-actions">
+                        <div class="table-filters">
+                            <button class="filter-btn active" data-filter="all">Semua</button>
+                            <button class="filter-btn" data-filter="EARN">EARN</button>
+                            <button class="filter-btn" data-filter="OPEX">OPEX</button>
+                            <button class="filter-btn" data-filter="VAR">VAR</button>
+                            <button class="filter-btn" data-filter="CAPEX">CAPEX</button>
+                            <button class="filter-btn" data-filter="FIN">FIN</button>
+                        </div>
+                        <div class="bulk-actions">
+                            <button class="btn-bulk-delete" onclick="showDeleteModal()">🗑️ Hapus Data</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="table-wrapper">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>No</th>
+                                <th>Tanggal</th>
+                                <th>Kategori</th>
+                                <th>Deskripsi</th>
+                                <th>Debit</th>
+                                <th>Kredit</th>
+                                <th>Aksi</th>
+                            </tr>
+                        </thead>
+                        <tbody id="transactionTable"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Jurnal Tab -->
+        <div class="tab-content" id="jurnal">
+            <div class="table-section">
+                <div class="table-header">
+                    <h2>📖 Jurnal Umum (General Journal)</h2>
+                </div>
+                <div class="table-wrapper">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Tanggal</th>
+                                <th>Keterangan</th>
+                                <th>Ref</th>
+                                <th>Debit (Rp)</th>
+                                <th>Kredit (Rp)</th>
+                            </tr>
+                        </thead>
+                        <tbody id="jurnalTable"></tbody>
+                        <tfoot>
+                            <tr style="background: rgba(0,255,135,0.1);">
+                                <td colspan="3"><strong>TOTAL</strong></td>
+                                <td><strong id="jurnalTotalDebit">Rp 0</strong></td>
+                                <td><strong id="jurnalTotalCredit">Rp 0</strong></td>
+                            </tr>
+                        </tfoot>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Ledger Tab -->
+        <div class="tab-content" id="ledger">
+            <div class="table-section">
+                <div class="table-header">
+                    <h2>📚 Buku Besar - Akun KAS</h2>
+                </div>
+                <div class="table-wrapper">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Tanggal</th>
+                                <th>Keterangan</th>
+                                <th>Debit (Rp)</th>
+                                <th>Kredit (Rp)</th>
+                                <th>Saldo (Rp)</th>
+                            </tr>
+                        </thead>
+                        <tbody id="ledgerTable"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Income Statement Tab -->
+        <div class="tab-content" id="income">
+            <div class="books-grid">
+                <div class="book-card" style="grid-column: span 2;">
+                    <div class="book-header">
+                        <span>💰</span>
+                        <h3>Laporan Laba Rugi (Income Statement)</h3>
+                    </div>
+                    <div class="book-content">
+                        <div class="book-row" style="background: rgba(0,255,135,0.1); padding: 1rem; border-radius: 8px; margin-bottom: 1rem;">
+                            <span class="book-label" style="font-weight: 600;">PENDAPATAN</span>
+                            <span></span>
+                        </div>
+                        <div class="book-row">
+                            <span class="book-label">  Pendapatan Sewa (EARN)</span>
+                            <span class="book-value positive" id="incomeEarn">Rp 0</span>
+                        </div>
+                        <div class="book-row total">
+                            <span class="book-label">Total Pendapatan</span>
+                            <span class="book-value positive" id="incomeTotalRev">Rp 0</span>
+                        </div>
+                        
+                        <div class="book-row" style="background: rgba(255,217,61,0.1); padding: 1rem; border-radius: 8px; margin: 1.5rem 0 1rem;">
+                            <span class="book-label" style="font-weight: 600;">BEBAN</span>
+                            <span></span>
+                        </div>
+                        <div class="book-row">
+                            <span class="book-label">  Beban Operasional (OPEX)</span>
+                            <span class="book-value negative" id="incomeOpex">Rp 0</span>
+                        </div>
+                        <div class="book-row">
+                            <span class="book-label">  Beban Variabel (VAR)</span>
+                            <span class="book-value negative" id="incomeVar">Rp 0</span>
+                        </div>
+                        <div class="book-row total">
+                            <span class="book-label">Total Beban</span>
+                            <span class="book-value negative" id="incomeTotalExp">Rp 0</span>
+                        </div>
+                        
+                        <div class="book-row total" style="background: var(--gradient-1); padding: 1rem; border-radius: 8px; margin-top: 1.5rem;">
+                            <span class="book-label" style="color: var(--bg-dark); font-size: 1.1rem;">LABA BERSIH</span>
+                            <span class="book-value" style="color: var(--bg-dark); font-size: 1.3rem;" id="incomeNetProfit">Rp 0</span>
+                        </div>
+                        <div class="book-row">
+                            <span class="book-label">Profit Margin</span>
+                            <span class="book-value" id="incomeProfitMargin">0%</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Balance Sheet Tab -->
+        <div class="tab-content" id="balance">
+            <div class="books-grid">
+                <div class="book-card">
+                    <div class="book-header">
+                        <span>📦</span>
+                        <h3>ASET (Assets)</h3>
+                    </div>
+                    <div class="book-content">
+                        <div class="book-row" style="color: var(--accent-green);">
+                            <span class="book-label">Aset Lancar</span>
+                            <span></span>
+                        </div>
+                        <div class="book-row">
+                            <span class="book-label">  Kas & Setara Kas</span>
+                            <span class="book-value" id="bsCash">Rp 0</span>
+                        </div>
+                        <div class="book-row total">
+                            <span class="book-label">Total Aset Lancar</span>
+                            <span class="book-value" id="bsTotalCurrent">Rp 0</span>
+                        </div>
+                        <div class="book-row" style="color: var(--accent-blue); margin-top: 1rem;">
+                            <span class="book-label">Aset Tetap</span>
+                            <span></span>
+                        </div>
+                        <div class="book-row">
+                            <span class="book-label">  Peralatan (CAPEX)</span>
+                            <span class="book-value" id="bsCapex">Rp 0</span>
+                        </div>
+                        <div class="book-row total" style="background: var(--accent-green); color: var(--bg-dark); padding: 1rem; border-radius: 8px;">
+                            <span class="book-label">TOTAL ASET</span>
+                            <span class="book-value" id="bsTotalAssets">Rp 0</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="book-card">
+                    <div class="book-header">
+                        <span>⚖️</span>
+                        <h3>LIABILITAS & EKUITAS</h3>
+                    </div>
+                    <div class="book-content">
+                        <div class="book-row" style="color: var(--accent-orange);">
+                            <span class="book-label">Liabilitas</span>
+                            <span></span>
+                        </div>
+                        <div class="book-row">
+                            <span class="book-label">  Utang Usaha</span>
+                            <span class="book-value" id="bsLiabilities">Rp 0</span>
+                        </div>
+                        <div class="book-row" style="color: var(--accent-purple); margin-top: 1rem;">
+                            <span class="book-label">Ekuitas</span>
+                            <span></span>
+                        </div>
+                        <div class="book-row">
+                            <span class="book-label">  Modal Awal</span>
+                            <span class="book-value" id="bsCapital">Rp 10,000,000</span>
+                        </div>
+                        <div class="book-row">
+                            <span class="book-label">  Laba Ditahan</span>
+                            <span class="book-value" id="bsRetained">Rp 0</span>
+                        </div>
+                        <div class="book-row">
+                            <span class="book-label">  Dividen (FIN)</span>
+                            <span class="book-value negative" id="bsDividend">Rp 0</span>
+                        </div>
+                        <div class="book-row total" style="background: var(--accent-green); color: var(--bg-dark); padding: 1rem; border-radius: 8px;">
+                            <span class="book-label">TOTAL L + E</span>
+                            <span class="book-value" id="bsTotalLE">Rp 0</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Cash Flow Tab -->
+        <div class="tab-content" id="cashflow">
+            <div class="chart-card" style="margin-bottom: 1.5rem;">
+                <div class="chart-header">
+                    <h3 class="chart-title">🌊 Waterfall Arus Kas</h3>
+                </div>
+                <div class="waterfall-container" id="waterfallChart"></div>
+            </div>
+            
+            <div class="books-grid">
+                <div class="book-card">
+                    <div class="book-header">
+                        <span>🟢</span>
+                        <h3>Aktivitas Operasi</h3>
+                    </div>
+                    <div class="book-content">
+                        <div class="book-row">
+                            <span class="book-label">Penerimaan (EARN)</span>
+                            <span class="book-value positive" id="cfEarn">Rp 0</span>
+                        </div>
+                        <div class="book-row">
+                            <span class="book-label">Pembayaran OPEX</span>
+                            <span class="book-value negative" id="cfOpex">Rp 0</span>
+                        </div>
+                        <div class="book-row">
+                            <span class="book-label">Pembayaran VAR</span>
+                            <span class="book-value negative" id="cfVar">Rp 0</span>
+                        </div>
+                        <div class="book-row total">
+                            <span class="book-label">Arus Kas Operasi</span>
+                            <span class="book-value" id="cfNetOperating">Rp 0</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="book-card">
+                    <div class="book-header">
+                        <span>🔵</span>
+                        <h3>Aktivitas Investasi</h3>
+                    </div>
+                    <div class="book-content">
+                        <div class="book-row">
+                            <span class="book-label">Pembelian Aset (CAPEX)</span>
+                            <span class="book-value negative" id="cfCapex">Rp 0</span>
+                        </div>
+                        <div class="book-row total">
+                            <span class="book-label">Arus Kas Investasi</span>
+                            <span class="book-value" id="cfNetInvesting">Rp 0</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="book-card">
+                    <div class="book-header">
+                        <span>🟣</span>
+                        <h3>Aktivitas Pendanaan</h3>
+                    </div>
+                    <div class="book-content">
+                        <div class="book-row">
+                            <span class="book-label">Pembayaran Dividen (FIN)</span>
+                            <span class="book-value negative" id="cfFin">Rp 0</span>
+                        </div>
+                        <div class="book-row total">
+                            <span class="book-label">Arus Kas Pendanaan</span>
+                            <span class="book-value" id="cfNetFinancing">Rp 0</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="book-card">
+                    <div class="book-header">
+                        <span>💰</span>
+                        <h3>Ringkasan</h3>
+                    </div>
+                    <div class="book-content">
+                        <div class="book-row">
+                            <span class="book-label">Saldo Kas Awal</span>
+                            <span class="book-value" id="cfBeginning">Rp 10,000,000</span>
+                        </div>
+                        <div class="book-row">
+                            <span class="book-label">Perubahan Kas</span>
+                            <span class="book-value" id="cfChange">Rp 0</span>
+                        </div>
+                        <div class="book-row total" style="background: var(--gradient-1); padding: 1rem; border-radius: 8px;">
+                            <span class="book-label" style="color: var(--bg-dark);">Saldo Kas Akhir</span>
+                            <span class="book-value" style="color: var(--bg-dark);" id="cfEnding">Rp 10,000,000</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Toast -->
+    <div class="toast" id="toast">
+        <span>✅</span>
+        <span id="toastMessage">Transaksi berhasil ditambahkan!</span>
+    </div>
+
+    <!-- Delete Modal -->
+    <div class="modal-overlay" id="deleteModal">
+        <div class="modal">
+            <div class="modal-header">
+                <div class="modal-icon">🗑️</div>
+                <div>
+                    <h3>Hapus Data Transaksi</h3>
+                    <p>Pilih data yang ingin dihapus</p>
+                </div>
+            </div>
+            <div class="modal-body">
+                <div class="delete-options" id="deleteOptions">
+                    <label class="delete-option" data-value="selected">
+                        <input type="radio" name="deleteType" value="selected">
+                        <div class="radio-circle"></div>
+                        <div class="delete-option-content">
+                            <div class="delete-option-title">Hapus Transaksi Terpilih</div>
+                            <div class="delete-option-desc">Pilih transaksi individual dari tabel</div>
+                        </div>
+                    </label>
+                    <label class="delete-option" data-value="EARN">
+                        <input type="radio" name="deleteType" value="EARN">
+                        <div class="radio-circle"></div>
+                        <div class="delete-option-content">
+                            <div class="delete-option-title">🟢 Hapus Semua EARN</div>
+                            <div class="delete-option-desc">Pemasukan sewa studio</div>
+                        </div>
+                        <span class="delete-option-count" id="countEARN">0</span>
+                    </label>
+                    <label class="delete-option" data-value="OPEX">
+                        <input type="radio" name="deleteType" value="OPEX">
+                        <div class="radio-circle"></div>
+                        <div class="delete-option-content">
+                            <div class="delete-option-title">🟡 Hapus Semua OPEX</div>
+                            <div class="delete-option-desc">Biaya operasional</div>
+                        </div>
+                        <span class="delete-option-count" id="countOPEX">0</span>
+                    </label>
+                    <label class="delete-option" data-value="VAR">
+                        <input type="radio" name="deleteType" value="VAR">
+                        <div class="radio-circle"></div>
+                        <div class="delete-option-content">
+                            <div class="delete-option-title">🟠 Hapus Semua VAR</div>
+                            <div class="delete-option-desc">Biaya variabel</div>
+                        </div>
+                        <span class="delete-option-count" id="countVAR">0</span>
+                    </label>
+                    <label class="delete-option" data-value="CAPEX">
+                        <input type="radio" name="deleteType" value="CAPEX">
+                        <div class="radio-circle"></div>
+                        <div class="delete-option-content">
+                            <div class="delete-option-title">🔵 Hapus Semua CAPEX</div>
+                            <div class="delete-option-desc">Pembelian aset</div>
+                        </div>
+                        <span class="delete-option-count" id="countCAPEX">0</span>
+                    </label>
+                    <label class="delete-option" data-value="FIN">
+                        <input type="radio" name="deleteType" value="FIN">
+                        <div class="radio-circle"></div>
+                        <div class="delete-option-content">
+                            <div class="delete-option-title">🟣 Hapus Semua FIN</div>
+                            <div class="delete-option-desc">Dividen/financing</div>
+                        </div>
+                        <span class="delete-option-count" id="countFIN">0</span>
+                    </label>
+                    <label class="delete-option" data-value="all" style="border-color: var(--accent-red);">
+                        <input type="radio" name="deleteType" value="all">
+                        <div class="radio-circle"></div>
+                        <div class="delete-option-content">
+                            <div class="delete-option-title" style="color: var(--accent-red);">⚠️ Hapus SEMUA Data</div>
+                            <div class="delete-option-desc">Reset seluruh transaksi</div>
+                        </div>
+                        <span class="delete-option-count" id="countALL">0</span>
+                    </label>
+                </div>
+                <div class="confirm-input-group" id="confirmGroup" style="display: none;">
+                    <label>Ketik <strong style="color: var(--accent-red);">HAPUS</strong> untuk konfirmasi:</label>
+                    <input type="text" id="confirmInput" placeholder="Ketik HAPUS">
+                    <div class="hint">⚠️ Tindakan ini tidak dapat dibatalkan</div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-modal btn-modal-cancel" onclick="hideDeleteModal()">Batal</button>
+                <button class="btn-modal btn-modal-confirm" id="btnConfirmDelete" onclick="executeDelete()" disabled>Hapus</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ========== DATA STORE ==========
+        const INITIAL_CAPITAL = 10000000;
+        
+        // Sample data for Hillside Studio
+        let transactions = [
+            { id: 1, date: '2024-01-05', category: 'EARN', desc: 'Sewa Studio - Client A', debit: 3500000, credit: 0 },
+            { id: 2, date: '2024-01-08', category: 'EARN', desc: 'Sewa Equipment Lighting', debit: 1200000, credit: 0 },
+            { id: 3, date: '2024-01-10', category: 'OPEX', desc: 'Bayar Listrik Studio', debit: 0, credit: 850000 },
+            { id: 4, date: '2024-01-15', category: 'OPEX', desc: 'Gaji Staff', debit: 0, credit: 4500000 },
+            { id: 5, date: '2024-01-18', category: 'VAR', desc: 'Perbaikan AC Studio', debit: 0, credit: 650000 },
+            { id: 6, date: '2024-01-20', category: 'EARN', desc: 'Sewa Studio - Wedding Shoot', debit: 5000000, credit: 0 },
+            { id: 7, date: '2024-01-22', category: 'CAPEX', desc: 'Beli Softbox Baru', debit: 0, credit: 2800000 },
+            { id: 8, date: '2024-01-25', category: 'EARN', desc: 'Sewa Studio - Product Photo', debit: 2500000, credit: 0 },
+            { id: 9, date: '2024-01-28', category: 'VAR', desc: 'Backdrop & Props', debit: 0, credit: 450000 },
+            { id: 10, date: '2024-01-30', category: 'FIN', desc: 'Owner Drawing', debit: 0, credit: 2000000 },
+            { id: 11, date: '2024-02-02', category: 'EARN', desc: 'Sewa Studio - Fashion Shoot', debit: 4200000, credit: 0 },
+            { id: 12, date: '2024-02-05', category: 'OPEX', desc: 'Internet & Wifi', debit: 0, credit: 450000 },
+            { id: 13, date: '2024-02-10', category: 'EARN', desc: 'Rental Camera + Lens', debit: 1800000, credit: 0 },
+            { id: 14, date: '2024-02-12', category: 'OPEX', desc: 'Bayar Listrik Februari', debit: 0, credit: 920000 },
+            { id: 15, date: '2024-02-15', category: 'OPEX', desc: 'Gaji Staff', debit: 0, credit: 4500000 },
+            { id: 16, date: '2024-02-18', category: 'VAR', desc: 'Cleaning Service', debit: 0, credit: 300000 },
+            { id: 17, date: '2024-02-20', category: 'EARN', desc: 'Sewa Studio - Corporate', debit: 6000000, credit: 0 },
+            { id: 18, date: '2024-02-25', category: 'CAPEX', desc: 'LED Panel Light', debit: 0, credit: 3500000 },
+        ];
+
+        let nextId = 19;
+        let activeFilter = 'all';
+
+        // ========== UTILITY FUNCTIONS ==========
+        function formatCurrency(amount) {
+            return 'Rp ' + Math.abs(amount).toLocaleString('id-ID');
+        }
+
+        function formatDate(dateStr) {
+            const date = new Date(dateStr);
+            return date.toLocaleDateString('id-ID', { day: '2-digit', month: 'short', year: 'numeric' });
+        }
+
+        function showToast(message) {
+            const toast = document.getElementById('toast');
+            document.getElementById('toastMessage').textContent = message;
+            toast.classList.add('show');
+            setTimeout(() => toast.classList.remove('show'), 3000);
+        }
+
+        // ========== CALCULATIONS ==========
+        function calculateTotals() {
+            const totals = {
+                earn: 0,
+                opex: 0,
+                var: 0,
+                capex: 0,
+                fin: 0,
+                totalDebit: 0,
+                totalCredit: 0
+            };
+
+            transactions.forEach(t => {
+                totals.totalDebit += t.debit;
+                totals.totalCredit += t.credit;
+                
+                switch(t.category) {
+                    case 'EARN': totals.earn += t.debit; break;
+                    case 'OPEX': totals.opex += t.credit; break;
+                    case 'VAR': totals.var += t.credit; break;
+                    case 'CAPEX': totals.capex += t.credit; break;
+                    case 'FIN': totals.fin += t.credit; break;
+                }
+            });
+
+            totals.netProfit = totals.earn - totals.opex - totals.var;
+            totals.cashBalance = INITIAL_CAPITAL + totals.totalDebit - totals.totalCredit;
+            totals.profitMargin = totals.earn > 0 ? (totals.netProfit / totals.earn * 100).toFixed(1) : 0;
+
+            return totals;
+        }
+
+        // ========== UPDATE UI ==========
+        function updateDashboard() {
+            const totals = calculateTotals();
+
+            document.getElementById('totalEarn').textContent = formatCurrency(totals.earn);
+            document.getElementById('totalOpex').textContent = formatCurrency(totals.opex);
+            document.getElementById('totalVar').textContent = formatCurrency(totals.var);
+            document.getElementById('totalCapex').textContent = formatCurrency(totals.capex);
+            document.getElementById('totalFin').textContent = formatCurrency(totals.fin);
+            document.getElementById('netProfit').textContent = formatCurrency(totals.netProfit);
+            document.getElementById('profitMargin').textContent = `Margin: ${totals.profitMargin}%`;
+            document.getElementById('cashBalance').textContent = formatCurrency(totals.cashBalance);
+            document.getElementById('totalTrx').textContent = transactions.length;
+
+            // Update Income Statement
+            document.getElementById('incomeEarn').textContent = formatCurrency(totals.earn);
+            document.getElementById('incomeTotalRev').textContent = formatCurrency(totals.earn);
+            document.getElementById('incomeOpex').textContent = formatCurrency(totals.opex);
+            document.getElementById('incomeVar').textContent = formatCurrency(totals.var);
+            document.getElementById('incomeTotalExp').textContent = formatCurrency(totals.opex + totals.var);
+            document.getElementById('incomeNetProfit').textContent = formatCurrency(totals.netProfit);
+            document.getElementById('incomeProfitMargin').textContent = totals.profitMargin + '%';
+
+            // Update Balance Sheet
+            document.getElementById('bsCash').textContent = formatCurrency(totals.cashBalance);
+            document.getElementById('bsTotalCurrent').textContent = formatCurrency(totals.cashBalance);
+            document.getElementById('bsCapex').textContent = formatCurrency(totals.capex);
+            document.getElementById('bsTotalAssets').textContent = formatCurrency(totals.cashBalance + totals.capex);
+            document.getElementById('bsRetained').textContent = formatCurrency(totals.netProfit);
+            document.getElementById('bsDividend').textContent = '-' + formatCurrency(totals.fin);
+            const totalEquity = INITIAL_CAPITAL + totals.netProfit - totals.fin;
+            document.getElementById('bsTotalLE').textContent = formatCurrency(totalEquity + totals.capex);
+
+            // Update Cash Flow
+            document.getElementById('cfEarn').textContent = formatCurrency(totals.earn);
+            document.getElementById('cfOpex').textContent = '-' + formatCurrency(totals.opex);
+            document.getElementById('cfVar').textContent = '-' + formatCurrency(totals.var);
+            const netOperating = totals.earn - totals.opex - totals.var;
+            document.getElementById('cfNetOperating').textContent = formatCurrency(netOperating);
+            document.getElementById('cfNetOperating').className = 'book-value ' + (netOperating >= 0 ? 'positive' : 'negative');
+            
+            document.getElementById('cfCapex').textContent = '-' + formatCurrency(totals.capex);
+            document.getElementById('cfNetInvesting').textContent = '-' + formatCurrency(totals.capex);
+            
+            document.getElementById('cfFin').textContent = '-' + formatCurrency(totals.fin);
+            document.getElementById('cfNetFinancing').textContent = '-' + formatCurrency(totals.fin);
+            
+            const cashChange = netOperating - totals.capex - totals.fin;
+            document.getElementById('cfChange').textContent = formatCurrency(cashChange);
+            document.getElementById('cfChange').className = 'book-value ' + (cashChange >= 0 ? 'positive' : 'negative');
+            document.getElementById('cfEnding').textContent = formatCurrency(INITIAL_CAPITAL + cashChange);
+
+            updateWaterfall(totals);
+        }
+
+        function updateTransactionTable() {
+            const tbody = document.getElementById('transactionTable');
+            const filtered = activeFilter === 'all' 
+                ? transactions 
+                : transactions.filter(t => t.category === activeFilter);
+
+            tbody.innerHTML = filtered.map((t, i) => `
+                <tr>
+                    <td>${i + 1}</td>
+                    <td>${formatDate(t.date)}</td>
+                    <td><span class="cat-badge ${t.category.toLowerCase()}">${t.category}</span></td>
+                    <td>${t.desc}</td>
+                    <td class="amount-positive">${t.debit > 0 ? formatCurrency(t.debit) : '-'}</td>
+                    <td class="amount-negative">${t.credit > 0 ? formatCurrency(t.credit) : '-'}</td>
+                    <td><button class="btn-delete" onclick="deleteTransaction(${t.id})">🗑️</button></td>
+                </tr>
+            `).join('');
+        }
+
+        function updateJurnalTable() {
+            const tbody = document.getElementById('jurnalTable');
+            const totals = calculateTotals();
+
+            tbody.innerHTML = transactions.map(t => `
+                <tr>
+                    <td>${formatDate(t.date)}</td>
+                    <td>${t.desc}</td>
+                    <td><span class="cat-badge ${t.category.toLowerCase()}">${t.category}</span></td>
+                    <td class="amount-positive">${t.debit > 0 ? formatCurrency(t.debit) : '-'}</td>
+                    <td class="amount-negative">${t.credit > 0 ? formatCurrency(t.credit) : '-'}</td>
+                </tr>
+            `).join('');
+
+            document.getElementById('jurnalTotalDebit').textContent = formatCurrency(totals.totalDebit);
+            document.getElementById('jurnalTotalCredit').textContent = formatCurrency(totals.totalCredit);
+        }
+
+        function updateLedgerTable() {
+            const tbody = document.getElementById('ledgerTable');
+            let balance = INITIAL_CAPITAL;
+
+            const rows = [`
+                <tr style="background: rgba(0,255,135,0.1);">
+                    <td>-</td>
+                    <td><strong>Saldo Awal</strong></td>
+                    <td>-</td>
+                    <td>-</td>
+                    <td><strong>${formatCurrency(balance)}</strong></td>
+                </tr>
+            `];
+
+            transactions.forEach(t => {
+                balance = balance + t.debit - t.credit;
+                rows.push(`
+                    <tr>
+                        <td>${formatDate(t.date)}</td>
+                        <td>${t.desc}</td>
+                        <td class="amount-positive">${t.debit > 0 ? formatCurrency(t.debit) : '-'}</td>
+                        <td class="amount-negative">${t.credit > 0 ? formatCurrency(t.credit) : '-'}</td>
+                        <td><strong>${formatCurrency(balance)}</strong></td>
+                    </tr>
+                `);
+            });
+
+            tbody.innerHTML = rows.join('');
+        }
+
+        function updateWaterfall(totals) {
+            const container = document.getElementById('waterfallChart');
+            const maxValue = Math.max(INITIAL_CAPITAL, totals.earn, totals.opex + totals.var, totals.capex, totals.fin, INITIAL_CAPITAL + totals.earn - totals.opex - totals.var - totals.capex - totals.fin);
+            const scale = 180 / maxValue;
+
+            const data = [
+                { label: 'Saldo Awal', value: INITIAL_CAPITAL, color: '#6b7280' },
+                { label: 'Pemasukan', value: totals.earn, color: '#00ff87' },
+                { label: 'OPEX+VAR', value: -(totals.opex + totals.var), color: '#ff6b35' },
+                { label: 'CAPEX', value: -totals.capex, color: '#00d4ff' },
+                { label: 'Dividen', value: -totals.fin, color: '#a855f7' },
+                { label: 'Saldo Akhir', value: INITIAL_CAPITAL + totals.earn - totals.opex - totals.var - totals.capex - totals.fin, color: '#00ff87' }
+            ];
+
+            container.innerHTML = data.map(d => `
+                <div class="waterfall-bar">
+                    <div class="bar-value" style="color: ${d.value >= 0 ? '#00ff87' : '#ff4757'}">${d.value >= 0 ? '+' : ''}${formatCurrency(d.value)}</div>
+                    <div class="bar" style="height: ${Math.abs(d.value) * scale}px; background: ${d.color};"></div>
+                    <div class="bar-label">${d.label}</div>
+                </div>
+            `).join('');
+        }
+
+        // ========== CHARTS ==========
+        let trendChart, expenseChart;
+
+        function initCharts() {
+            const trendCtx = document.getElementById('trendChart').getContext('2d');
+            trendChart = new Chart(trendCtx, {
+                type: 'line',
+                data: {
+                    labels: ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun'],
+                    datasets: [{
+                        label: 'Pemasukan',
+                        data: [12200000, 12000000, 0, 0, 0, 0],
+                        borderColor: '#00ff87',
+                        backgroundColor: 'rgba(0, 255, 135, 0.1)',
+                        fill: true,
+                        tension: 0.4
+                    }, {
+                        label: 'Pengeluaran',
+                        data: [11950000, 9670000, 0, 0, 0, 0],
+                        borderColor: '#ff6b35',
+                        backgroundColor: 'rgba(255, 107, 53, 0.1)',
+                        fill: true,
+                        tension: 0.4
+                    }, {
+                        label: 'Laba Bersih',
+                        data: [250000, 2330000, 0, 0, 0, 0],
+                        borderColor: '#a855f7',
+                        backgroundColor: 'rgba(168, 85, 247, 0.1)',
+                        fill: true,
+                        tension: 0.4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'top',
+                            labels: { color: '#8b8b9e', usePointStyle: true }
+                        }
+                    },
+                    scales: {
+                        x: {
+                            grid: { color: 'rgba(255,255,255,0.05)' },
+                            ticks: { color: '#8b8b9e' }
+                        },
+                        y: {
+                            grid: { color: 'rgba(255,255,255,0.05)' },
+                            ticks: { 
+                                color: '#8b8b9e',
+                                callback: v => 'Rp ' + (v/1000000).toFixed(1) + 'jt'
+                            }
+                        }
+                    }
+                }
+            });
+
+            const expenseCtx = document.getElementById('expenseChart').getContext('2d');
+            expenseChart = new Chart(expenseCtx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['OPEX', 'VAR', 'CAPEX', 'FIN'],
+                    datasets: [{
+                        data: [11220000, 1400000, 6300000, 2000000],
+                        backgroundColor: ['#ffd93d', '#ff6b35', '#00d4ff', '#a855f7'],
+                        borderWidth: 0
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'bottom',
+                            labels: { color: '#8b8b9e', usePointStyle: true, padding: 15 }
+                        }
+                    },
+                    cutout: '65%'
+                }
+            });
+        }
+
+        function updateCharts() {
+            const totals = calculateTotals();
+            
+            // Update expense chart
+            expenseChart.data.datasets[0].data = [totals.opex, totals.var, totals.capex, totals.fin];
+            expenseChart.update();
+
+            // Update trend chart (simplified - just showing current month data)
+            const janEarn = transactions.filter(t => t.date.startsWith('2024-01') && t.category === 'EARN').reduce((s, t) => s + t.debit, 0);
+            const janExp = transactions.filter(t => t.date.startsWith('2024-01') && ['OPEX', 'VAR', 'CAPEX', 'FIN'].includes(t.category)).reduce((s, t) => s + t.credit, 0);
+            const febEarn = transactions.filter(t => t.date.startsWith('2024-02') && t.category === 'EARN').reduce((s, t) => s + t.debit, 0);
+            const febExp = transactions.filter(t => t.date.startsWith('2024-02') && ['OPEX', 'VAR', 'CAPEX', 'FIN'].includes(t.category)).reduce((s, t) => s + t.credit, 0);
+
+            trendChart.data.datasets[0].data = [janEarn, febEarn, 0, 0, 0, 0];
+            trendChart.data.datasets[1].data = [janExp, febExp, 0, 0, 0, 0];
+            trendChart.data.datasets[2].data = [janEarn - janExp, febEarn - febExp, 0, 0, 0, 0];
+            trendChart.update();
+        }
+
+        // ========== DELETE MODAL FUNCTIONS ==========
+        let selectedDeleteType = null;
+
+        function showDeleteModal() {
+            const modal = document.getElementById('deleteModal');
+            
+            // Update counts
+            document.getElementById('countEARN').textContent = transactions.filter(t => t.category === 'EARN').length;
+            document.getElementById('countOPEX').textContent = transactions.filter(t => t.category === 'OPEX').length;
+            document.getElementById('countVAR').textContent = transactions.filter(t => t.category === 'VAR').length;
+            document.getElementById('countCAPEX').textContent = transactions.filter(t => t.category === 'CAPEX').length;
+            document.getElementById('countFIN').textContent = transactions.filter(t => t.category === 'FIN').length;
+            document.getElementById('countALL').textContent = transactions.length;
+            
+            // Reset selection
+            document.querySelectorAll('.delete-option').forEach(opt => opt.classList.remove('selected'));
+            document.getElementById('confirmGroup').style.display = 'none';
+            document.getElementById('confirmInput').value = '';
+            document.getElementById('btnConfirmDelete').disabled = true;
+            selectedDeleteType = null;
+            
+            modal.classList.add('show');
+        }
+
+        function hideDeleteModal() {
+            document.getElementById('deleteModal').classList.remove('show');
+        }
+
+        function executeDelete() {
+            if (!selectedDeleteType) return;
+            
+            let deletedCount = 0;
+            
+            if (selectedDeleteType === 'all') {
+                if (document.getElementById('confirmInput').value !== 'HAPUS') {
+                    showToast('Ketik HAPUS untuk konfirmasi!');
+                    return;
+                }
+                deletedCount = transactions.length;
+                transactions = [];
+                nextId = 1;
+            } else if (selectedDeleteType === 'selected') {
+                // This option just closes modal - user deletes from table
+                hideDeleteModal();
+                showToast('Klik tombol 🗑️ pada transaksi yang ingin dihapus');
+                return;
+            } else {
+                const before = transactions.length;
+                transactions = transactions.filter(t => t.category !== selectedDeleteType);
+                deletedCount = before - transactions.length;
+            }
+            
+            hideDeleteModal();
+            refreshAllViews();
+            showToast(`${deletedCount} transaksi berhasil dihapus!`);
+        }
+
+        // ========== EVENT HANDLERS ==========
+        function deleteTransaction(id) {
+            if (confirm('Hapus transaksi ini?')) {
+                transactions = transactions.filter(t => t.id !== id);
+                refreshAllViews();
+                showToast('Transaksi berhasil dihapus!');
+            }
+        }
+
+        function refreshAllViews() {
+            updateDashboard();
+            updateTransactionTable();
+            updateJurnalTable();
+            updateLedgerTable();
+            updateCharts();
+        }
+
+        // ========== INITIALIZATION ==========
+        document.addEventListener('DOMContentLoaded', () => {
+            // Set current date
+            document.getElementById('currentDate').textContent = new Date().toLocaleDateString('id-ID', {
+                weekday: 'long', day: 'numeric', month: 'long', year: 'numeric'
+            });
+
+            // Set default date in form
+            document.getElementById('inputDate').valueAsDate = new Date();
+
+            // Tab navigation
+            document.querySelectorAll('.nav-tab').forEach(tab => {
+                tab.addEventListener('click', () => {
+                    document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+                    document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+                    tab.classList.add('active');
+                    document.getElementById(tab.dataset.tab).classList.add('active');
+                });
+            });
+
+            // Filter buttons
+            document.querySelectorAll('.filter-btn').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+                    btn.classList.add('active');
+                    activeFilter = btn.dataset.filter;
+                    updateTransactionTable();
+                });
+            });
+
+            // Form submission
+            document.getElementById('transactionForm').addEventListener('submit', (e) => {
+                e.preventDefault();
+                
+                const category = document.getElementById('inputCategory').value;
+                const type = document.getElementById('inputType').value;
+                const amount = parseInt(document.getElementById('inputAmount').value);
+
+                const newTrx = {
+                    id: nextId++,
+                    date: document.getElementById('inputDate').value,
+                    category: category,
+                    desc: document.getElementById('inputDesc').value,
+                    debit: type === 'debit' ? amount : 0,
+                    credit: type === 'credit' ? amount : 0
+                };
+
+                transactions.push(newTrx);
+                transactions.sort((a, b) => new Date(a.date) - new Date(b.date));
+                
+                refreshAllViews();
+                showToast('Transaksi berhasil ditambahkan!');
+                
+                // Reset form
+                e.target.reset();
+                document.getElementById('inputDate').valueAsDate = new Date();
+            });
+
+            // Auto-set type based on category
+            document.getElementById('inputCategory').addEventListener('change', (e) => {
+                const typeSelect = document.getElementById('inputType');
+                if (e.target.value === 'EARN') {
+                    typeSelect.value = 'debit';
+                } else {
+                    typeSelect.value = 'credit';
+                }
+            });
+
+            // Initialize
+            initCharts();
+            refreshAllViews();
+
+            // Delete modal option selection
+            document.querySelectorAll('.delete-option').forEach(option => {
+                option.addEventListener('click', () => {
+                    document.querySelectorAll('.delete-option').forEach(opt => opt.classList.remove('selected'));
+                    option.classList.add('selected');
+                    selectedDeleteType = option.dataset.value;
+                    
+                    const confirmGroup = document.getElementById('confirmGroup');
+                    const btnConfirm = document.getElementById('btnConfirmDelete');
+                    
+                    if (selectedDeleteType === 'all') {
+                        confirmGroup.style.display = 'block';
+                        btnConfirm.disabled = true;
+                    } else if (selectedDeleteType === 'selected') {
+                        confirmGroup.style.display = 'none';
+                        btnConfirm.disabled = false;
+                    } else {
+                        confirmGroup.style.display = 'none';
+                        btnConfirm.disabled = false;
+                    }
+                });
+            });
+
+            // Confirm input validation
+            document.getElementById('confirmInput').addEventListener('input', (e) => {
+                document.getElementById('btnConfirmDelete').disabled = e.target.value !== 'HAPUS';
+            });
+
+            // Close modal on overlay click
+            document.getElementById('deleteModal').addEventListener('click', (e) => {
+                if (e.target.id === 'deleteModal') {
+                    hideDeleteModal();
+                }
+            });
+
+            // Close modal on Escape key
+            document.addEventListener('keydown', (e) => {
+                if (e.key === 'Escape') {
+                    hideDeleteModal();
+                }
+            });
+        });
+    </script>
+</body>
+</html>
