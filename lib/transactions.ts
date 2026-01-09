@@ -10,7 +10,7 @@ export const transactionService = {
       .order('date', { ascending: true })
 
     if (error) throw error
-    return data || []
+    return (data || []) as Transaction[]
   },
 
   // Get transactions by category
@@ -22,7 +22,7 @@ export const transactionService = {
       .order('date', { ascending: true })
 
     if (error) throw error
-    return data || []
+    return (data || []) as Transaction[]
   },
 
   // Get transactions by month
@@ -38,44 +38,60 @@ export const transactionService = {
       .order('date', { ascending: true })
 
     if (error) throw error
-    return data || []
+    return (data || []) as Transaction[]
   },
 
   // Search transactions
   async search(query: string): Promise<Transaction[]> {
-    const { data, error } = await supabase
+    const { data, error} = await supabase
       .from('transactions')
       .select('*')
       .or(`description.ilike.%${query}%,category.ilike.%${query}%`)
       .order('date', { ascending: true })
 
     if (error) throw error
-    return data || []
+    return (data || []) as Transaction[]
   },
 
   // Add new transaction
   async create(transaction: Omit<Transaction, 'id' | 'created_at' | 'updated_at'>): Promise<Transaction> {
-    const { data, error } = await supabase
+    const { data, error } = await (supabase
       .from('transactions')
-      .insert([transaction])
+      .insert({
+        date: transaction.date,
+        category: transaction.category,
+        description: transaction.description,
+        income: transaction.income,
+        expense: transaction.expense,
+        account: transaction.account,
+      })
       .select()
-      .single()
+      .single() as any)
 
     if (error) throw error
-    return data
+    return data as Transaction
   },
 
   // Update transaction
   async update(id: number, transaction: Partial<Transaction>): Promise<Transaction> {
-    const { data, error } = await supabase
+    const updateData: any = {}
+
+    if (transaction.date) updateData.date = transaction.date
+    if (transaction.category) updateData.category = transaction.category
+    if (transaction.description) updateData.description = transaction.description
+    if (transaction.income !== undefined) updateData.income = transaction.income
+    if (transaction.expense !== undefined) updateData.expense = transaction.expense
+    if (transaction.account) updateData.account = transaction.account
+
+    const { data, error } = await (supabase
       .from('transactions')
-      .update(transaction)
+      .update(updateData)
       .eq('id', id)
       .select()
-      .single()
+      .single() as any)
 
     if (error) throw error
-    return data
+    return data as Transaction
   },
 
   // Delete transaction
