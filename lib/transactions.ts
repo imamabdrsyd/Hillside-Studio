@@ -1,5 +1,8 @@
 import { supabase } from './supabase'
 import { Transaction, TransactionCategory } from '@/types/transaction'
+import { Database } from '@/types/database'
+
+type TransactionInsert = Database['public']['Tables']['transactions']['Insert']
 
 export const transactionService = {
   // Get all transactions
@@ -54,7 +57,7 @@ export const transactionService = {
   },
 
   // Add new transaction
-  async create(transaction: Omit<Transaction, 'id' | 'created_at' | 'updated_at'>): Promise<Transaction> {
+  async create(transaction: TransactionInsert): Promise<Transaction> {
     const { data, error } = await supabase
       .from('transactions')
       .insert([transaction])
